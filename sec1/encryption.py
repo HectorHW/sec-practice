@@ -17,7 +17,7 @@ class EncodingAlphabet(str, Enum):
         return self
 
 
-def encode_ceasar(alphabet: EncodingAlphabet, message: str, offset: int) -> str:
+def encode_caesar(alphabet: EncodingAlphabet, message: str, offset: int) -> str:
     alphabet = alphabet.get_alphabet_string()
     if any(letter not in alphabet and not letter.isspace() for letter in message):
         raise ValueError
@@ -34,5 +34,5 @@ def encode_ceasar(alphabet: EncodingAlphabet, message: str, offset: int) -> str:
     return "".join(map(encode_letter, message))
 
 
-def decode_ceasar(alphabet: EncodingAlphabet, message: str, offset: int) -> str:
-    return encode_ceasar(alphabet, message, -offset)
+def decode_caesar(alphabet: EncodingAlphabet, message: str, offset: int) -> str:
+    return encode_caesar(alphabet, message, -offset)

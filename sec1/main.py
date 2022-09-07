@@ -1,5 +1,5 @@
 import PySimpleGUI as sg
-from encryption import EncodingAlphabet, encode_ceasar, decode_ceasar
+from encryption import EncodingAlphabet, encode_caesar, decode_caesar
 
 
 LANGUAGE_KEY = "language"
@@ -8,7 +8,7 @@ DECODE_KEY = "decode"
 
 
 language_button = sg.Button(
-    button_text=EncodingAlphabet.RUSSIAN, key=LANGUAGE_KEY, pad=0)
+    button_text=EncodingAlphabet.RUSSIAN, key=LANGUAGE_KEY)
 
 textfield_size = (10, 1)
 
@@ -30,7 +30,7 @@ fields = sg.Column([[encoding_area, decoding_area]], expand_x=True)
 layout = [[top_row],
           [fields]
           ]
-window = sg.Window('Ceasar', layout, font=("Consolas", 16), resizable=True)
+window = sg.Window('Caesar', layout, font=("Consolas", 16), resizable=True)
 
 while True:
     event, values = window.read()
@@ -51,7 +51,7 @@ while True:
 
         try:
             message = input_field.get().lower()
-            encoded = encode_ceasar(
+            encoded = encode_caesar(
                 language_button.ButtonText, message, offset)
             output_field.Update(value=encoded)
         except ValueError:
@@ -65,7 +65,7 @@ while True:
 
         try:
             message = output_field.get().lower()
-            encoded = decode_ceasar(
+            encoded = decode_caesar(
                 language_button.ButtonText, message, offset)
             input_field.Update(value=encoded)
         except ValueError:
