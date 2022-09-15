@@ -14,20 +14,27 @@ language_button = sg.Button(
 textfield_size = (10, 5)
 
 
-input_field = sg.Multiline(expand_x=True, expand_y=True, size=textfield_size, tooltip="текст")
-output_field = sg.Multiline(expand_x=True, expand_y=True,  size=textfield_size, tooltip="шифротекст")
+input_field = sg.Multiline(
+    expand_x=True, expand_y=True, size=textfield_size, tooltip="текст")
+output_field = sg.Multiline(
+    expand_x=True, expand_y=True,  size=textfield_size, tooltip="шифротекст")
 offset_field = sg.InputText(size=(5, 1), default_text="3")
 offset_text = sg.Text("сдвиг")
 encode_button = sg.Button(button_text="Зашифровать", key=ENCODE_KEY)
 decode_button = sg.Button(button_text="Расшифровать", key=DECODE_KEY)
 
-encoding_area = sg.Column([[encode_button], [input_field]], expand_x=True, expand_y=True)
-decoding_area = sg.Column([[decode_button], [output_field]], expand_x=True, expand_y=True)
+encoding_area = sg.Column(
+    [[encode_button], [input_field]], expand_x=True, expand_y=True)
+decoding_area = sg.Column(
+    [[decode_button], [output_field]], expand_x=True, expand_y=True)
 
 top_row = sg.Column(
-    [[offset_text, offset_field, language_button]], element_justification="right", expand_x=True)
+    [[offset_text, offset_field, language_button]],
+    element_justification="right",
+    expand_x=True)
 
-fields = sg.Column([[encoding_area, decoding_area]], expand_x=True, expand_y=True)
+fields = sg.Column([[encoding_area, decoding_area]],
+                   expand_x=True, expand_y=True)
 
 layout = [[top_row],
           [fields]
@@ -35,10 +42,12 @@ layout = [[top_row],
 window = sg.Window('Шифр цезаря', layout, font=("Consolas", 16),
                    resizable=True, size=(800, 200))
 
+
 def prettify_error_list(letters: List[str]) -> str:
-    if len(letters) <=3:
+    if len(letters) <= 3:
         return ", ".join(letters)
     return ", ".join(letters[:3]) + "..."
+
 
 while True:
     event, values = window.read()
@@ -64,7 +73,9 @@ while True:
             output_field.Update(value=encoded)
         except ValueError as e:
             errors = prettify_error_list(e.args[0])
-            sg.Popup(f"недопустимые символы в поле текста: {errors}", keep_on_top=True)
+            sg.Popup(
+                f"недопустимые символы в поле текста: {errors}",
+                keep_on_top=True)
     elif event == DECODE_KEY:
         try:
             offset = int(offset_field.get())
@@ -79,6 +90,8 @@ while True:
             input_field.Update(value=encoded)
         except ValueError as e:
             errors = prettify_error_list(e.args[0])
-            sg.Popup(f"недопустимые символы в поле шифротекста: {errors}", keep_on_top=True)
+            sg.Popup(
+                f"недопустимые символы в поле шифротекста: {errors}",
+                keep_on_top=True)
 
 window.close()
