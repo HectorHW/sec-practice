@@ -17,10 +17,15 @@ class EncodingAlphabet(str, Enum):
         return self
 
 
+def _bailout_on_unexpected_chars(alphabet: str, message: str):
+    def predicate(symbol:str)->bool:
+        return symbol not in alphabet and not symbol.isspace()
+    if errors:=list(filter(predicate, message)):
+        raise ValueError(errors)
+
 def encode_caesar(alphabet: EncodingAlphabet, message: str, offset: int) -> str:
     alphabet = alphabet.get_alphabet_string()
-    if any(letter not in alphabet and not letter.isspace() for letter in message):
-        raise ValueError
+    _bailout_on_unexpected_chars(alphabet, message)
 
     offset = offset % len(alphabet)
 

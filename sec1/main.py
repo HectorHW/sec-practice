@@ -1,3 +1,4 @@
+from typing import List
 import PySimpleGUI as sg
 from encryption import EncodingAlphabet, encode_caesar, decode_caesar
 
@@ -12,12 +13,12 @@ language_button = sg.Button(
 
 textfield_size = (10, 1)
 
-input_field = sg.InputText(key="input", expand_x=True, size=textfield_size)
-output_field = sg.InputText(key="output", expand_x=True,  size=textfield_size)
-offset_field = sg.InputText(key="offset", size=(5, 1), default_text="3")
+input_field = sg.InputText(key="Текст", expand_x=True, size=textfield_size)
+output_field = sg.InputText(key="Шифротекст", expand_x=True,  size=textfield_size)
+offset_field = sg.InputText(key="Сдвиг", size=(5, 1), default_text="3")
 offset_text = sg.Text("offset")
-encode_button = sg.Button(button_text="encode", key=ENCODE_KEY)
-decode_button = sg.Button(button_text="decode", key=DECODE_KEY)
+encode_button = sg.Button(button_text="Зашифровать", key=ENCODE_KEY)
+decode_button = sg.Button(button_text="Расшифровать", key=DECODE_KEY)
 
 encoding_area = sg.Column([[encode_button], [input_field]], expand_x=True)
 decoding_area = sg.Column([[decode_button], [output_field]], expand_x=True)
@@ -30,7 +31,13 @@ fields = sg.Column([[encoding_area, decoding_area]], expand_x=True)
 layout = [[top_row],
           [fields]
           ]
-window = sg.Window('Caesar', layout, font=("Consolas", 16), resizable=True)
+window = sg.Window('Шифр цезаря', layout, font=("Consolas", 16),
+                   resizable=True, size=(800, 200))
+
+def prettify_error_list(letters: List[str]) -> str:
+    if len(letters) <=3:
+        return ", ".join(letters)
+    return ", ".join(letters[:3]) + "..."
 
 while True:
     event, values = window.read()
@@ -46,7 +53,7 @@ while True:
         try:
             offset = int(offset_field.get())
         except ValueError:
-            sg.Popup("invalid offset value", keep_on_top=True)
+            sg.Popup("неверное значение сдвига", keep_on_top=True)
             continue
 
         try:
@@ -54,13 +61,14 @@ while True:
             encoded = encode_caesar(
                 language_button.ButtonText, message, offset)
             output_field.Update(value=encoded)
-        except ValueError:
-            sg.Popup("unexpected characters in encoding field", keep_on_top=True)
+        except ValueError as e:
+            errors = prettify_error_list(e.args[0])
+            sg.Popup(f"недопустимые символы в поле текста: {errors}", keep_on_top=True)
     elif event == DECODE_KEY:
         try:
             offset = int(offset_field.get())
         except ValueError:
-            sg.Popup("invalid offset value", keep_on_top=True)
+            sg.Popup("неверное значение сдвига", keep_on_top=True)
             continue
 
         try:
@@ -68,7 +76,8 @@ while True:
             encoded = decode_caesar(
                 language_button.ButtonText, message, offset)
             input_field.Update(value=encoded)
-        except ValueError:
-            sg.Popup("unexpected characters in decoding field", keep_on_top=True)
+        except ValueError as e:
+            errors = prettify_error_list(e.args[0])
+            sg.Popup(f"недопустимые символы в поле шифротекста: {errors}", keep_on_top=True)
 
 window.close()
