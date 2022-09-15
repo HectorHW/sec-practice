@@ -11,22 +11,23 @@ DECODE_KEY = "decode"
 language_button = sg.Button(
     button_text=EncodingAlphabet.RUSSIAN, key=LANGUAGE_KEY)
 
-textfield_size = (10, 1)
+textfield_size = (10, 5)
 
-input_field = sg.InputText(key="Текст", expand_x=True, size=textfield_size)
-output_field = sg.InputText(key="Шифротекст", expand_x=True,  size=textfield_size)
-offset_field = sg.InputText(key="Сдвиг", size=(5, 1), default_text="3")
-offset_text = sg.Text("offset")
+
+input_field = sg.Multiline(expand_x=True, expand_y=True, size=textfield_size, tooltip="текст")
+output_field = sg.Multiline(expand_x=True, expand_y=True,  size=textfield_size, tooltip="шифротекст")
+offset_field = sg.InputText(size=(5, 1), default_text="3")
+offset_text = sg.Text("сдвиг")
 encode_button = sg.Button(button_text="Зашифровать", key=ENCODE_KEY)
 decode_button = sg.Button(button_text="Расшифровать", key=DECODE_KEY)
 
-encoding_area = sg.Column([[encode_button], [input_field]], expand_x=True)
-decoding_area = sg.Column([[decode_button], [output_field]], expand_x=True)
+encoding_area = sg.Column([[encode_button], [input_field]], expand_x=True, expand_y=True)
+decoding_area = sg.Column([[decode_button], [output_field]], expand_x=True, expand_y=True)
 
 top_row = sg.Column(
     [[offset_text, offset_field, language_button]], element_justification="right", expand_x=True)
 
-fields = sg.Column([[encoding_area, decoding_area]], expand_x=True)
+fields = sg.Column([[encoding_area, decoding_area]], expand_x=True, expand_y=True)
 
 layout = [[top_row],
           [fields]
