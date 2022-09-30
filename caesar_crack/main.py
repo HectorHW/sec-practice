@@ -68,7 +68,6 @@ while True:
         language_button.Update(text=new_option)
 
     elif event == LOAD_KEY:
-        print("file")
         if file := sg.popup_get_file("выберите файл..."):
             try:
                 with open(file) as f:
@@ -78,6 +77,7 @@ while True:
                 sg.Popup(
                     f"ошибка при чтении файла",
                     keep_on_top=True)
+                continue
 
     elif event == CRACK_KEY:
         try:
@@ -89,20 +89,16 @@ while True:
             sg.Popup(
                 f"недопустимые символы в поле текста: {errors}",
                 keep_on_top=True)
-
-        print(possible_offsets)
+            continue
 
         top_candidates = sorted(possible_offsets.items(),
                                 key=lambda item: item[1], reverse=True)
-
-        print(top_candidates)
 
         variants.Update(
             list(map(lambda item: f"{item[0]: >2} ({item[1]:.3f})", top_candidates)))
 
     elif event == LISTBOX_KEY:
         selection = values[event]
-        print(selection)
         offset = int(selection[0].strip().split(" ")[0])
         try:
             text = decode_caesar(language_button.ButtonText,
