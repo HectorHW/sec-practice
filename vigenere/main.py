@@ -20,6 +20,9 @@ output_field = sg.Multiline(
     expand_x=True, expand_y=True,  size=textfield_size, tooltip="шифротекст")
 offset_field = sg.InputText(size=(10, 1), default_text="")
 offset_text = sg.Text("ключ")
+
+spaces_checkbox = sg.Checkbox("пропускать \s")
+
 encode_button = sg.Button(button_text="Зашифровать", key=ENCODE_KEY)
 decode_button = sg.Button(button_text="Расшифровать", key=DECODE_KEY)
 
@@ -28,10 +31,15 @@ encoding_area = sg.Column(
 decoding_area = sg.Column(
     [[decode_button], [output_field]], expand_x=True, expand_y=True)
 
-top_row = sg.Column(
+top_left = sg.Column([[spaces_checkbox]], element_justification="left")
+top_right = sg.Column(
     [[offset_text, offset_field, language_button]],
     element_justification="right",
     expand_x=True)
+
+top_row = sg.Column(
+    [[top_left, top_right]], expand_x=True
+)
 
 fields = sg.Column([[encoding_area, decoding_area]],
                    expand_x=True, expand_y=True)
@@ -66,7 +74,7 @@ while True:
         try:
             message = input_field.get().lower()
             encoded = transform_vigenere(
-                language_button.ButtonText, message, key)
+                language_button.ButtonText, message, key, skip_ws=spaces_checkbox.get())
             output_field.Update(value=encoded)
         except UnsupportedMessage as e:
             errors = prettify_error_list(e.args[0])
@@ -85,7 +93,7 @@ while True:
         try:
             message = output_field.get().lower()
             decoded = transform_vigenere(
-                language_button.ButtonText, message, key, inv=True)
+                language_button.ButtonText, message, key, inv=True, skip_ws=spaces_checkbox.get())
             input_field.Update(value=decoded)
         except UnsupportedMessage as e:
             errors = prettify_error_list(e.args[0])

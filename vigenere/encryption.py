@@ -45,7 +45,7 @@ def _bailout_on_unexpected_key(key_alphabet: str, key: str):
         raise UnsupportedKey(errors)
 
 
-def transform_vigenere(alphabet: EncodingAlphabet, message: str, key: str, inv=False) -> str:
+def transform_vigenere(alphabet: EncodingAlphabet, message: str, key: str, inv=False, skip_ws=False) -> str:
     if not key:
         return message
     alphabet, key_alphabet = alphabet.get_alphabet_string(), \
@@ -53,12 +53,17 @@ def transform_vigenere(alphabet: EncodingAlphabet, message: str, key: str, inv=F
     _bailout_on_unexpected_chars(alphabet, message)
     _bailout_on_unexpected_key(key_alphabet, key)
 
-    def encode_letter(letter: str, offset_letter: str) -> str:
+    key_iter = cycle(key)
+
+    def encode_letter(letter: str) -> str:
         if letter not in alphabet:
+            if not skip_ws:
+                next(key_iter)
             return letter
+        offset_letter = next(key_iter)
         position = alphabet.index(letter)
         shift = key_alphabet.index(offset_letter) * (-1 if inv else 1)
         encoded = (position + shift) % len(alphabet)
         return alphabet[encoded]
 
-    return "".join(map(encode_letter, message, cycle(key)))
+    return "".join(map(encode_letter, message))
