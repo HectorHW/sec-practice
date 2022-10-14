@@ -80,9 +80,14 @@ while True:
                 continue
 
     elif event == CRACK_KEY:
+
+        text = input_field.get().lower()
+        if not text:
+            continue
+
         try:
             possible_offsets = crack(
-                input_field.get().lower(), language_button.ButtonText)
+                text, language_button.ButtonText)
 
         except ValueError as e:
             errors = prettify_error_list(e.args[0])
