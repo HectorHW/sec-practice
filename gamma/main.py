@@ -116,7 +116,6 @@ while True:
         output_bytes.update(value=coded)
         update_from_bytes("output_bytes")
     elif event == DECODE_KEY:
-
         key = key_bytes.get()
         message = output_bytes.get()
 
@@ -125,7 +124,6 @@ while True:
         update_from_bytes("input_bytes")
 
     elif event.endswith('field'):
-        print(event, values)
         matching_field = globals()[event.replace("field", "bytes")]
         matching_field.update(
             value=bit_string(values[event].encode())
