@@ -49,20 +49,17 @@ layout = [
 window = sg.Window('RSA', layout, font=("Consolas", 16),
                    resizable=True, size=(800, 400))
 
-digits_and_space = string.digits + " "
 
 REPLACEMENT = u"\ufffd"
 
 
-def decode_symbol_safe(data: int) -> str:
-    try:
-        return re.sub('[\0-\7]', REPLACEMENT, chr(data))
-    except ValueError:
-        return REPLACEMENT
+def int_to_bytes(number: int) -> bytes:
+    return number.to_bytes(length=(8 + (number + (number < 0)).bit_length()) // 8, byteorder='big', signed=True)
 
 
-def decode_safe(data: Iterable[int]) -> str:
-    return "".join(map(decode_symbol_safe, data))
+def decode_safe(data: int) -> str:
+    data = int_to_bytes(data)
+    return re.sub('[\0-\7]', REPLACEMENT, data.decode(errors="replace"))
 
 
 def fetch_value(ptr: str) -> int:
@@ -79,17 +76,15 @@ while True:
     elif event.endswith("_data"):
         edited_field = globals()[event]
         text = edited_field.get()
-        text: str = "".join(filter(lambda c: c in digits_and_space, text))
+        text: str = "".join(filter(lambda c: c in string.digits, text))
         edited_field.update(value=text, move_cursor_to=None)
 
         if event == "message_data":
-            numbers = map(int, re.split(r"\s+", text.strip())
-                          ) if text.strip() else []
-
-            message_text.update(value=decode_safe(numbers))
+            number = int(text) if text.strip() else 0
+            message_text.update(value=decode_safe(number))
     elif event == "message_text":
-        message_data.update(value=" ".join(
-            map(str, map(ord, message_text.get()))))
+        message_data.update(value=int.from_bytes(
+            message_text.get().encode(), byteorder="big"))
     elif event in ["bitness", "e", "n", "d"]:
         edited_field = globals()[event+"_field"]
         text = edited_field.get()
@@ -122,17 +117,16 @@ while True:
 
         text = message_data.get()
 
-        numbers = list(map(int, re.split(r"\s+", text.strip())
-                           )) if text.strip() else []
+        number = int(text)
 
-        if any(num >= n for num in numbers):
+        if number >= n:
             sg.Popup(
-                "недопустимое значение: некоторые значения ввода больше значения модуля")
+                "недопустимое значение: численное представление ввода больше значения модуля")
             continue
 
-        encrypted = [encrypt(data, PublicKey(n, e)) for data in numbers]
+        encrypted = encrypt(number, PublicKey(n, e))
 
-        cypher_data.update(value=" ".join(map(str, encrypted)))
+        cypher_data.update(value=encrypted)
 
     elif event == "decrypt":
         try:
@@ -144,15 +138,14 @@ while True:
 
         text = cypher_data.get()
 
-        numbers = list(map(int, re.split(r"\s+", text.strip())
-                           )) if text.strip() else []
+        data = int(cypher_data.get()) if text.strip() else 0
 
-        if any(num >= n for num in numbers):
+        if data >= n:
             sg.Popup(
                 "недопустимое значение: некоторые значения ввода больше значения модуля")
             continue
 
-        decrypted = [decrypt(data, PrivateKey(n, d)) for data in numbers]
+        decrypted = decrypt(data, PrivateKey(n, d))
 
-        message_data.update(value=" ".join(map(str, decrypted)))
+        message_data.update(value=decrypted)
         message_text.update(value=decode_safe(decrypted))
