@@ -104,6 +104,7 @@ while True:
             continue
         if bitness < 4:
             sg.Popup("слишком маленькая длина")
+            continue
         data = generate_keypair(primes_size=bitness)
         keypair = data.keypair
         e_field.update(value=keypair.public.e)
