@@ -50,19 +50,6 @@ def generate_keypair(primes_size: int) -> KeypairGenerationResult:
     return KeypairGenerationResult(keypair, p, q, totient)
 
 
-def int_to_bytes(number: int) -> bytes:
-    return number.to_bytes(length=(8 + (number + (number < 0)).bit_length()) // 8, byteorder='big', signed=True)
-
-
-class AvalancheNoise:
-    def add_noise(self, data: List[int]) -> List[int]:
-        segments = list(map(int_to_bytes, data))
-        raise NotImplementedError
-
-    def subtract_noise(self, noised_data: List[int]) -> List[int]:
-        raise NotImplementedError
-
-
 def encrypt(data: int, key: PublicKey) -> int:
     assert data < key.n
     return pow(data, key.e, key.n)
