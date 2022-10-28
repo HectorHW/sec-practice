@@ -107,7 +107,6 @@ while True:
         d_field.update(value=keypair.private.d)
 
     elif event == "encrypt":
-        print("encrypt")
         try:
             n = fetch_value("n")
             e = fetch_value("e")
