@@ -18,6 +18,15 @@ n_field = sg.InputText(enable_events=True, key="n")
 d_text = sg.Text("d")
 d_field = sg.InputText(enable_events=True, key="d")
 
+p_text = sg.Text("p")
+p_field = sg.InputText(disabled=True)
+
+q_text = sg.Text("q")
+q_field = sg.InputText(disabled=True)
+
+phi_text = sg.Text("phi(n)")
+phi_field = sg.InputText(disabled=True)
+
 
 message_text = sg.InputText(enable_events=True, key="message_text")
 message_data = sg.InputText(enable_events=True, key="message_data")
@@ -36,6 +45,12 @@ layout = [
 
     [sg.HorizontalSeparator()],
 
+    [p_text, p_field],
+    [q_text, q_field],
+    [phi_text, phi_field],
+
+    [sg.HorizontalSeparator()],
+
     [sg.Text("text")],
 
     [message_text],
@@ -47,7 +62,7 @@ layout = [
 ]
 
 window = sg.Window('RSA', layout, font=("Consolas", 16),
-                   resizable=True, size=(800, 400))
+                   resizable=True, size=(800, 600))
 
 
 REPLACEMENT = u"\ufffd"
@@ -105,6 +120,9 @@ while True:
         e_field.update(value=keypair.public.e)
         n_field.update(value=keypair.public.n)
         d_field.update(value=keypair.private.d)
+        p_field.update(value=data.p)
+        q_field.update(value=data.q)
+        phi_field.update(value=data.totient)
 
     elif event == "encrypt":
         try:
