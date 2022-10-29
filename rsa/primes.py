@@ -1,4 +1,5 @@
 import random
+from power import pow
 
 
 def miller_rabin_test(n: int, rounds: int | None = None) -> bool:
@@ -38,7 +39,7 @@ def miller_rabin_test(n: int, rounds: int | None = None) -> bool:
 
 
 def get_random(bitlen: int) -> int:
-    return random.randint(2**(bitlen-1), 2**bitlen)
+    return random.randint(2**(bitlen-1)+1, 2**bitlen)
 
 
 def get_random_prime(bitlen: int) -> int:
