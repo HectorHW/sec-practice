@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     import random
     print(list(bits(0b101001)))
-    print(pow(12, 5, 7), pow(12, 5, 7))
+    print(pow(12, 5, 7), builtin_pow(12, 5, 7))
     for _ in range(10000):
         a, b, m = random_params()
         assert pow(a, b, m) == builtin_pow(a, b, m)
