@@ -6,7 +6,7 @@ def miller_rabin_test(n: int, rounds: int | None = None) -> bool:
     """
     returns true if number is probably prime, returns false otherwise
     """
-    rounds = rounds or n.bit_length()
+    rounds = rounds or n.bit_length() + 1
 
     n_1 = n - 1
     n_2 = n_1 - 1
