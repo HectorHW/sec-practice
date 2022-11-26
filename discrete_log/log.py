@@ -7,17 +7,17 @@ def baby_giant(y: int, g: int, p: int):
     """
     m = ceil(sqrt(p))
     table = {}
-    exp = 1
-    for j in range(m):
-        table[exp] = j
-        exp = exp * g % p
+    e1 = pow(g, m, p)
+    exp = e1
+    for i in range(1, m+1):
+        table[exp] = i
+        exp = exp * e1 % p
 
-    inv = pow(g, -m, p)
     gamma = y
-    for i in range(m):
+    for j in range(m):
         if gamma in table:
-            return i * m + table[gamma]
-        gamma = gamma * inv % p
+            return table[gamma] * m - j
+        gamma = gamma * g % p
 
 
 if __name__ == "__main__":
